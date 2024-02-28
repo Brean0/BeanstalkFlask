@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+     <!-- Title bar container -->
+    <div class="title-bar">
+        <h1>Beanstalk Analytics</h1>
+    </div>
+    <div class="container">
+        <div class="left">
+            <img src="{{ url_for('static', filename='chart.gif') }}" alt="GIF">
+        </div>
+        <div class="right">
+            <h1>Stats</h1>
+            <h2 id="data-list"></h2> <!-- Unordered list for displaying data -->
+        </div>
+    </div>
+
+    <!-- JavaScript code for fetching and updating data -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        function update(){
+            fetch('/update')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the UI with the new data
+                    const dataList = document.getElementById('data-list');
+                    dataList.innerHTML = ''; // Clear previous data
+                    data.forEach(item => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = item; // Assuming tuple elements are strings
+                        dataList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+        update()
+        var intervalId = setInterval(function() {
+            update()
+        }, 10000);
+
+    </script>
+</body>
+</html>

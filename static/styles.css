@@ -1,0 +1,37 @@
+body {
+    background-color: black; /* Set background color to black */
+    color: white; /* Set font color to white */
+    font-family: Futura, Arial, sans-serif; /* Optional: Specify font family */
+}
+
+.container {
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Distribute items evenly along the main axis */
+}
+
+/* Title bar styling */
+.title-bar {
+    background-color: #333; /* Example background color (dark gray) */
+    color: white; /* Example text color (white) */
+    padding: 10px; /* Example padding */
+    text-align: center; /* Center-align the title text */
+}
+
+.left {
+    flex: 0 0 75%; /* Take up 50% of the container width */
+}
+
+.right {
+    flex: 0 0 25%; /* Take up 50% of the container width */
+}
+
+.right h1 {
+    text-align: center;
+}
+
+/* Optional: Adjust styles as needed */
+.left img {
+    max-width: 100%; /* Ensure the image fits within its container */
+}
+
+/* You can add more styling here for your data */
