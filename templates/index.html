@@ -16,6 +16,8 @@
             <img src="{{ url_for('static', filename='chart.gif') }}" alt="GIF">
         </div>
         <div class="right">
+            <h2 id="date"></h2>
+            <h2 id="clock"></h2>
             <h1>Stats</h1>
             <h2 id="data-list"></h2> <!-- Unordered list for displaying data -->
         </div>
@@ -41,11 +43,28 @@
                     console.error('Error fetching data:', error);
                 });
         }
-        update()
-        var intervalId = setInterval(function() {
-            update()
-        }, 10000);
+        
+        // Function to update the clock
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const timeString = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('clock').textContent = timeString;
 
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const dateString = `${year}-${month}-${day}`;
+            document.getElementById('date').textContent = dateString;
+        }
+
+        update()
+        updateClock()
+
+        setInterval(update, 10000);
+        setInterval(updateClock, 1000);
     </script>
 </body>
 </html>
