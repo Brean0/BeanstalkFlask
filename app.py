@@ -22,6 +22,4 @@ if __name__ == '__main__':
         genGraphs.createPlots()
     
     # run app:
-    
-    print("app deployed at: 192.168.1.215:5001")
     serve(app, host='0.0.0.0', port=5001)
