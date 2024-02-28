@@ -10,7 +10,7 @@ def getWeb3Data():
     BEAN_CONTRACT = '0xBEA0000029AD1c77D3d5D23Ba2D8893dB9d1Efab'
     MULTICALL_CONTRACT = '0xcA11bde05977b3631167028862bE2a173976CA11'
 
-    web3 = Web3(Web3.HTTPProvider('https://eth-mainnet.g.alchemy.com/v2/lXyN2Y4RN7w4ylnry0aEcfVoEHzXs3Ym'))
+    web3 = Web3(Web3.HTTPProvider(os.environ.get('RPC_URL')))
     BEANSTALK_ABI = json.load(open('beanstalk.json'))
     BEANSTALK_PRICE_ABI = json.load(open('beanstalkPrice.json'))
     BEAN = json.load(open('bean.json'))
