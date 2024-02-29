@@ -36,6 +36,12 @@ body = """
       stalk
     }
   }
+  siloAssetHourlySnapshots(first: 5, orderBy: season, orderDirection: desc) {
+    siloAsset {
+      depositedBDV
+      token
+    }
+  }
 }
 """
 
@@ -57,5 +63,9 @@ def getBeanstalkData() -> tuple:
     beans = np.array([float(x['beans']) for x in beanstalks])
     price = np.array([float(x['price']) for x in beanstalks])
     stalk = np.array([int(x['silo']['stalk']) for x in json['data']['farmers']]) / 1e10
-    data = [deltaB, podRate, beans, price, stalk]
+    # create a dict for the depositedBDV, mapping from token to deposited BDV:
+    depositedBDV = {}
+    for x in json['data']['siloAssetHourlySnapshots']:
+        depositedBDV[x['siloAsset']['token'][:8]] = float(x['siloAsset']['depositedBDV'])
+    data = [deltaB, podRate, beans, price, stalk, depositedBDV]
     return(data, latestSeason)

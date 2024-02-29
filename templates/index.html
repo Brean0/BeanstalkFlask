@@ -13,7 +13,10 @@
     </div>
     <div class="container">
         <div class="left">
-            <img src="{{ url_for('static', filename='chart.gif') }}" alt="GIF">
+            <img class="img" src="{{ url_for('static', filename='chart.png') }}">
+        </div>
+        <div class="center">
+            <img class="gif" src="{{ url_for('static', filename='chart.gif') }}" alt="GIF">
         </div>
         <div class="right">
             <h2 id="date"></h2>

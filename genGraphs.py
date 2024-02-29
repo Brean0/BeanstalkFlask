@@ -4,9 +4,10 @@ import subgraph
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import numpy as np
-
+import matplotlib
+import time
+matplotlib.use('TkAgg')
 plt.style.use('dark_background')
-# plt.style.use('ggplot')
 
 V_PRIME = 1.0005
 D_MAX = 1000
@@ -15,10 +16,14 @@ D_B = 300
 MAX_GRAVITY = 100
 
 NROW = 3
-NCOL = 3
+NCOL = 2
 NGRAPHS = NROW * NCOL
 
-ROTATION_PLOTS = [3,6,9] # note: start index = 1
+NROW2 = 3
+NCOL2 = 1
+NGRAPHS2 = NROW2 * NCOL2
+
+ROTATION_PLOTS = [1,2,3] # note: start index = 1
 
 def priceWithDebt(v, d) -> float:
     ## c ranges between -.5 and .5.
@@ -68,6 +73,9 @@ def plotDebtXPrice(ax, d:float, v:float) -> plt.axes:
     ax.set_title('Price x Pod Rate')
     ax.plot_wireframe(V, D, Z, edgecolor='blue')
     ax.scatter(v, d, priceWithDebt(v, d) + debtLevelWithPrice(d, v), color='red', s=50, label='Dot')
+    V = None
+    D = None
+    Z = None
 
 def plotPriceXL2SR(ax, v:float, l:float) -> plt.axes:
     NUM = 10
@@ -88,6 +96,9 @@ def plotPriceXL2SR(ax, v:float, l:float) -> plt.axes:
     ax.grid(False)
     ax.axis('off')
     ax.plot_wireframe(V, L, Z, edgecolor='blue')
+    V = None
+    L = None
+    Z = None
 
 def priceXL2SR(V, L) -> plt.axes:
     return ((-V**2 + 0.5*V + 0.5) * L) + (-(V-0.5)**2 + 0.5*(V-0.5) + 0.5) * (1 - L)
@@ -112,6 +123,9 @@ def plotDebtLevelXL2SR(ax, d:float, l:float) -> plt.axes:
     ax.plot_wireframe(D, L, Z, edgecolor='blue')
     z = Z[10 - int(l * 10)][int((1000 - d)/100)]
     ax.scatter(d, l, z, color='red', s=50, label='Dot')
+    D = None
+    Z = None
+    L = None
 
 def plotPriceXTime(ax, v) -> plt.axes:
     x = np.linspace(len(v)/24, 0, len(v))
@@ -122,6 +136,7 @@ def plotPriceXTime(ax, v) -> plt.axes:
     ax.set_ylabel('Price')
     ax.set_title('Price (1w)')
     ax.plot(x, v)
+    x = None
 
 def plotPodRateXTime(ax, d) -> plt.axes:
     x = np.linspace(len(d)/24, 0, len(d))
@@ -134,6 +149,7 @@ def plotPodRateXTime(ax, d) -> plt.axes:
     ax.set_xlabel('Time')
     ax.set_ylabel('Pod Rate')
     ax.plot(x, d)
+    x = None
 
 def plotL2SRXTime(ax, l) -> plt.axes:
     x = np.linspace(len(l)/24, 0, len(l))
@@ -141,6 +157,7 @@ def plotL2SRXTime(ax, l) -> plt.axes:
     ax.set_xlabel('Time')
     ax.set_ylabel('L2SR')
     ax.plot(x, l)
+    x = None
 
 def plotBeanSupplyXTime(ax, mcap) -> plt.axes:
     x = np.linspace(len(mcap)/24, 0, len(mcap))
@@ -149,6 +166,7 @@ def plotBeanSupplyXTime(ax, mcap) -> plt.axes:
     ax.set_xlabel('Time')
     ax.set_ylabel('Supply')
     ax.plot(x, mcap)
+    x = None
 
 def plotStalkFarmers(ax, stalk) -> plt.axes:
     # remove the first stalk in the array:
@@ -156,6 +174,11 @@ def plotStalkFarmers(ax, stalk) -> plt.axes:
     # rotate pie graph:
     ax.pie(stalk, startangle=90)
     ax.set_title('Stalk Distribution')
+
+def plotDepositedBdv(ax, bdv, _labels) -> plt.axes:
+    ax.pie(bdv, startangle=90, labels=None)
+    ax.legend(labels=_labels)
+    ax.set_title('BDV Distribution')
 
 def normalize(x: np.array) -> np.array:
     return (x - np.min(x)) / (np.max(x) - np.min(x))
@@ -167,33 +190,38 @@ def rotate(angle):
         axList[axes - 1].view_init(30, angle)
 
 def createPlots() -> plt.Figure:
+    data, latestSeason = subgraph.getBeanstalkData()
+    fig1 = plt.figure(figsize=(20, 32))
+
+    ## static plots:
+    axes = []
+    for i in range(1, NGRAPHS + 1):
+        ax = fig1.add_subplot(NROW, NCOL, i)
+        axes.append(ax)
+    plotPriceXTime(axes[0], data[3])
+    plotPodRateXTime(axes[1], data[1] * 100)
+    plotL2SRXTime(axes[2], np.linspace(1, 1, 100))
+    plotBeanSupplyXTime(axes[3], data[2] / 1000000e6)
+    plotDepositedBdv(axes[4], list(data[5].values()), list(data[5].keys()))
+    plotStalkFarmers(axes[5], data[4])
+    plt.tight_layout()
+    plt.savefig('static/chart.png')
+
+    ## dynamic plots:
     d = 800
     l = 1
     v = 1
-
-    data, latestSeason = subgraph.getBeanstalkData()
-    fig = plt.figure(figsize=(10, 6))
-
-    axes = []
-    for i in range(1, NGRAPHS + 1):
-        if(i in ROTATION_PLOTS):
-            ax = fig.add_subplot(NROW, NCOL, i, projection='3d')
-        else:
-            ax = fig.add_subplot(NROW, NCOL, i)
+    fig2 = plt.figure(figsize=(10, 32))
+    axes = [] 
+    for i in range(1, NGRAPHS2 + 1):
+        ax = fig2.add_subplot(NROW2, NCOL2, i, projection='3d')
         axes.append(ax)
-
-    plotPriceXTime(axes[0], data[3])
-    plotPodRateXTime(axes[1], data[1] * 100)
-    plotPriceXL2SR(axes[2], 0.5, l)
-    plotL2SRXTime(axes[3], np.linspace(1, 1, 100))
-    plotBeanSupplyXTime(axes[4], data[2] / 1000000e6)
-    plotDebtLevelXL2SR(axes[5], d, l)
-    plotStalkFarmers(axes[7], data[4])
-    plotDebtXPrice(axes[8], d, v)
-
+    plotPriceXL2SR(axes[0], 0.5, l)
+    plotDebtLevelXL2SR(axes[1], d, l)
+    plotDebtXPrice(axes[2], d, v)
     plt.tight_layout()
-    rot_animation = FuncAnimation(fig, rotate, frames=np.arange(0,362,0.5), interval=50)
-    rot_animation.save('static/chart.gif', writer='pillow')
+    rot_animation = FuncAnimation(fig2, rotate, frames=np.arange(0,361,2), interval=100)
+    rot_animation.save('static/chart.gif', dpi = 100)
     
 if __name__ == "__main__":
     createPlots()
