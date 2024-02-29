@@ -191,7 +191,7 @@ def rotate(angle):
 
 def createPlots() -> plt.Figure:
     data, latestSeason = subgraph.getBeanstalkData()
-    fig1 = plt.figure(figsize=(20, 32))
+    fig1 = plt.figure(figsize=(14, 15))
 
     ## static plots:
     axes = []
@@ -211,7 +211,7 @@ def createPlots() -> plt.Figure:
     d = 800
     l = 1
     v = 1
-    fig2 = plt.figure(figsize=(10, 32))
+    fig2 = plt.figure(figsize=(7, 20))
     axes = [] 
     for i in range(1, NGRAPHS2 + 1):
         ax = fig2.add_subplot(NROW2, NCOL2, i, projection='3d')
