@@ -6,7 +6,7 @@ import matplotlib.ticker as mtick
 import numpy as np
 import matplotlib
 import time
-matplotlib.use('TkAgg')
+matplotlib.use('Agg')
 plt.style.use('dark_background')
 
 V_PRIME = 1.0005
