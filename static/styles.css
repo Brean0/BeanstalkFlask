@@ -2,6 +2,7 @@ body {
     background-color: black; /* Set background color to black */
     color: white; /* Set font color to white */
     font-family: Futura, Arial, sans-serif; /* Optional: Specify font family */
+   
 }
 
 .container {
@@ -32,9 +33,14 @@ body {
 .right h1 {
     text-align: center;
 }
+    
+h1 {
+    font-size: 60px; /* Set the font size for h1 headers */
+}
 
-/* Optional: Adjust styles as needed */
-
+h2 {
+    font-size: 48px; /* Set the font size for h2 headers */
+}
 
 /* You can add more styling here for your data */
 .gif {

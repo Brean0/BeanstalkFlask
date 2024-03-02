@@ -3,7 +3,6 @@ import web3calls
 import genGraphs
 from waitress import serve
 import os
-import tracemalloc 
 
 
 app = Flask(__name__)
@@ -22,7 +21,6 @@ if __name__ == '__main__':
     # if not, create it:
     if not os.path.exists('static/chart.gif'):
         print("Creating chart.gif")
-        tracemalloc.start()
         genGraphs.createPlots()
     
     # run app:
